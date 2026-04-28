@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>資料を開いています...</title>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J2N5R4LZY1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-J2N5R4LZY1');
+
+    window.onload = function() {
+      gtag('event', 'open_sheet');
+
+      setTimeout(function() {
+        location.href = "https://docs.google.com/spreadsheets/d/1sYS4XgTsx5LqSV4d-2msQ-XDMdR5PFOghmabRyHotJo/edit?usp=sharing";
+      }, 800);
+    };
+  </script>
+</head>
+<body>
+  <p>資料を開いています...</p>
+</body>
+</html>
