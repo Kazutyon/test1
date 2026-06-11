@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>かんたん公開鍵暗号 動くRSA実験室</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      color-scheme: light;
+      --ink: #1d2b28;
+      --muted: #526963;
+      --line: #c7dcd4;
+      --panel: #ffffff;
+      --soft: #eef7f3;
+      --soft-2: #fff4df;
+      --accent: #2f7b65;
+      --accent-2: #b55d2a;
+      --bad: #b93838;
+      --ok: #1d7a53;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #f4f8f6;
+      color: var(--ink);
+      font-family: "Segoe UI", "Noto Sans JP", system-ui, sans-serif;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 20px;
+      border-bottom: 3px solid var(--line);
+      padding-bottom: 18px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.35;
+    }
+
+    h1 {
+      font-size: clamp(1.65rem, 3vw, 2.55rem);
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      padding-bottom: 10px;
+      border-bottom: 2px dotted var(--line);
+    }
+
+    h3 {
+      font-size: 1rem;
+      color: #174f41;
+    }
+
+    .lead {
+      margin: 8px 0 0;
+      max-width: 900px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .toolbar,
+    .panel,
+    .summary-card,
+    .notice {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 10px 24px rgba(24, 62, 51, 0.08);
+    }
+
+    .toolbar {
+      padding: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    button {
+      min-height: 38px;
+      border: 1px solid #98beb0;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .controls {
+      position: sticky;
+      top: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    label {
+      font-weight: 800;
+      color: #25443c;
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid #9fc5b8;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 1rem;
+      font: inherit;
+      background: #fff;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      min-height: 24px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 3px 12px;
+      border-radius: 999px;
+      background: var(--soft-2);
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .small-pill {
+      min-height: 26px;
+      padding: 2px 9px;
+      font-size: 0.9rem;
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .three {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .summary-card {
+      padding: 14px;
+      min-height: 96px;
+    }
+
+    .summary-card .label {
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 800;
+    }
+
+    .summary-card .value {
+      margin-top: 4px;
+      font-size: 1.7rem;
+      font-weight: 900;
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      overflow-wrap: anywhere;
+    }
+
+    .summary-card .caption {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-top: 3px;
+    }
+
+    .formula {
+      background: var(--soft);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      overflow-wrap: anywhere;
+    }
+
+    .step {
+      background: #fbfdfc;
+      border-left: 4px solid #5eb899;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 10px;
+    }
+
+    .step ol,
+    .step ul {
+      margin: 8px 0 0 22px;
+      padding: 0;
+    }
+
+    .step li {
+      margin: 4px 0;
+    }
+
+    .notice {
+      padding: 14px 16px;
+      border-left: 6px solid var(--accent);
+      color: #25443c;
+    }
+
+    .notice.bad {
+      border-left-color: var(--bad);
+      background: #fff7f7;
+      color: #6b2424;
+    }
+
+    .notice.ok {
+      border-left-color: var(--ok);
+      background: #f2fbf6;
+    }
+
+    .status-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .status-item {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 8px;
+      align-items: start;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .mark {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #dff1e9;
+      color: var(--ok);
+      font-weight: 900;
+    }
+
+    .mark.bad {
+      background: #ffe1e1;
+      color: var(--bad);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr 52px 1fr 52px 1fr;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .flow-box {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 120px;
+    }
+
+    .flow-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-size: 1.8rem;
+      font-weight: 900;
+    }
+
+    .big-number {
+      font-size: clamp(1.9rem, 4vw, 3.25rem);
+      line-height: 1;
+      font-family: "Cascadia Mono", "Consolas", monospace;
+      font-weight: 900;
+      margin-top: 8px;
+      overflow-wrap: anywhere;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    details {
+      margin-top: 10px;
+      background: #fbfdfc;
+      border: 1px solid #d7e7e1;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 800;
+      color: #174f41;
+    }
+
+    code {
+      font-family: "Cascadia Mono", "Consolas", monospace;
+    }
+
+    footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      text-align: center;
+    }
+
+    @media (max-width: 1120px) {
+      .grid,
+      .three,
+      .summary-row {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        position: static;
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-arrow {
+        min-height: 28px;
+        transform: rotate(90deg);
+      }
+
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>かんたん公開鍵暗号 動くRSA実験室</h1>
+        <p class="lead">
+          素数 p・q、公開指数 e、送りたい数字 M を変えると、公開鍵・秘密鍵・暗号文・復号結果・計算過程がすべて連動して変わります。
+        </p>
+      </div>
+      <div class="toolbar" aria-label="プリセット">
+        <button type="button" data-preset="tiny" class="primary">3, 11, 7</button>
+        <button type="button" data-preset="medium">5, 11, 8</button>
+        <button type="button" data-preset="bigger">7, 17, 19</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <aside class="controls">
+        <section class="panel">
+          <h2>入力を変える</h2>
+
+          <div class="field">
+            <label for="pInput">素数 p</label>
+            <input id="pInput" type="number" min="2" max="97" step="1" value="3">
+            <div class="hint">小さな素数にすると手計算の流れが追いやすいです。</div>
+          </div>
+
+          <div class="field">
+            <label for="qInput">素数 q</label>
+            <input id="qInput" type="number" min="2" max="97" step="1" value="11">
+          </div>
+
+          <div class="field">
+            <label for="eInput">公開指数 e</label>
+            <input id="eInput" type="number" min="2" max="999" step="1" value="3">
+            <div class="hint">e は 1 &lt; e &lt; φ(n)、かつ φ(n) と互いに素なら使えます。</div>
+          </div>
+
+          <div class="field">
+            <label for="messageInput">送りたい数字 M</label>
+            <input id="messageInput" type="number" min="0" step="1" value="7">
+            <input id="messageRange" type="range" min="0" max="32" step="1" value="7">
+            <div class="hint">RSAでは M は 0 以上 n 未満の数字として扱います。</div>
+          </div>
+
+          <div class="status-list" id="statusList"></div>
+        </section>
+
+        <section class="notice">
+          <strong>見る順番</strong><br>
+          1. 受信者が p と q から鍵を作る<br>
+          2. 送信者が公開鍵だけで M を暗号化する<br>
+          3. 受信者が秘密鍵 d で元の M に戻す
+        </section>
+      </aside>
+
+      <section class="content">
+        <div class="summary-row">
+          <div class="summary-card">
+            <div class="label">n = p × q</div>
+            <div class="value" id="nValue">33</div>
+            <div class="caption">公開鍵にも秘密鍵にも入る数</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">φ(n) = (p-1)(q-1)</div>
+            <div class="value" id="phiValue">20</div>
+            <div class="caption">秘密鍵 d を作るための数</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">公開鍵 (e, n)</div>
+            <div class="value" id="publicKeyValue">(3, 33)</div>
+            <div class="caption">送信者や外部に公開してよい</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">秘密鍵 (d, n)</div>
+            <div class="value" id="privateKeyValue">(7, 33)</div>
+            <div class="caption">受信者だけが持つ</div>
+          </div>
+        </div>
+
+        <section class="notice ok" id="mainNotice"></section>
+
+        <section class="flow">
+          <div class="flow-box">
+            <h3>送る前の数字 M</h3>
+            <div class="big-number" id="flowMessage">7</div>
+            <div class="muted">これはまだ平文です。</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box">
+            <h3>公開鍵で暗号化</h3>
+            <div class="big-number" id="flowCipher">13</div>
+            <div class="muted">ネット上にはこの暗号文 C が流れます。</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box">
+            <h3>秘密鍵で復号</h3>
+            <div class="big-number" id="flowDecrypted">7</div>
+            <div class="muted" id="flowResultText">元の数字に戻りました。</div>
+          </div>
+        </section>
+
+        <div class="three">
+          <section class="panel">
+            <h2>1. 受信者が鍵を作る</h2>
+            <div class="formula" id="keyFormula"></div>
+            <div class="step">
+              <h3>秘密指数 d の探し方</h3>
+              <div id="inverseSteps"></div>
+            </div>
+            <details open>
+              <summary>この段階で何が決まった？</summary>
+              <p id="keyExplanation"></p>
+            </details>
+          </section>
+
+          <section class="panel">
+            <h2>2. 送信者が暗号化する</h2>
+            <div class="formula" id="encryptFormula"></div>
+            <div class="step">
+              <h3>暗号化の計算過程</h3>
+              <div id="encryptSteps"></div>
+            </div>
+            <details open>
+              <summary>送信者が知っているもの</summary>
+              <p>
+                送信者が使うのは、受信者が公開した <span class="pill small-pill" id="senderPublicKey"></span> と、送りたい数字 M だけです。
+                秘密鍵 d は知りません。
+              </p>
+            </details>
+          </section>
+
+          <section class="panel">
+            <h2>3. 受信者が復号する</h2>
+            <div class="formula" id="decryptFormula"></div>
+            <div class="step">
+              <h3>復号の計算過程</h3>
+              <div id="decryptSteps"></div>
+            </div>
+            <details open>
+              <summary>なぜ元に戻る？</summary>
+              <p id="whyText"></p>
+            </details>
+          </section>
+        </div>
+
+        <section class="panel">
+          <h2>公開鍵と秘密鍵の動き</h2>
+          <div class="step">
+            <ol>
+              <li>受信者は素数 p と q を選び、n と φ(n) を計算します。</li>
+              <li>受信者は公開指数 e を決め、e × d を φ(n) で割ると 1 余る d を探します。</li>
+              <li>公開鍵 <span class="pill small-pill" id="publicKeyAgain"></span> はみんなに渡します。</li>
+              <li>秘密鍵 <span class="pill small-pill" id="privateKeyAgain"></span> は受信者だけが隠し持ちます。</li>
+              <li>送信者は公開鍵で暗号化できるけれど、復号には秘密鍵 d が必要です。</li>
+            </ol>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      学習用の小さなRSAデモです。実際の暗号では、ここでは扱えないほど巨大な素数と安全な実装を使います。
+    </footer>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const inputs = {
+      p: $("pInput"),
+      q: $("qInput"),
+      e: $("eInput"),
+      message: $("messageInput"),
+      range: $("messageRange")
+    };
+
+    const presets = {
+      tiny: { p: 3, q: 11, e: 3, message: 7 },
+      medium: { p: 5, q: 11, e: 3, message: 8 },
+      bigger: { p: 7, q: 17, e: 5, message: 19 }
+    };
+
+    function intValue(input, fallback) {
+      const value = Number.parseInt(input.value, 10);
+      return Number.isFinite(value) ? value : fallback;
+    }
+
+    function isPrime(n) {
+      if (n < 2) return false;
+      if (n === 2) return true;
+      if (n % 2 === 0) return false;
+      for (let i = 3; i * i <= n; i += 2) {
+        if (n % i === 0) return false;
+      }
+      return true;
+    }
+
+    function gcd(a, b) {
+      a = Math.abs(a);
+      b = Math.abs(b);
+      while (b !== 0) {
+        const t = b;
+        b = a % b;
+        a = t;
+      }
+      return a;
+    }
+
+    function extendedGcd(a, b) {
+      let oldR = a;
+      let r = b;
+      let oldS = 1;
+      let s = 0;
+      let oldT = 0;
+      let t = 1;
+      const rows = [];
+
+      while (r !== 0) {
+        const quotient = Math.floor(oldR / r);
+        rows.push(`${oldR} = ${quotient} × ${r} + ${oldR - quotient * r}`);
+        [oldR, r] = [r, oldR - quotient * r];
+        [oldS, s] = [s, oldS - quotient * s];
+        [oldT, t] = [t, oldT - quotient * t];
+      }
+
+      return { gcd: oldR, x: oldS, y: oldT, rows };
+    }
+
+    function modInverse(e, phi) {
+      const result = extendedGcd(e, phi);
+      if (result.gcd !== 1) return null;
+      const inverse = ((result.x % phi) + phi) % phi;
+      return { inverse, trace: result };
+    }
+
+    function modPow(base, exponent, modulus) {
+      if (modulus === 1) return 0;
+      let result = 1n;
+      let b = BigInt(base) % BigInt(modulus);
+      let exp = BigInt(exponent);
+      const mod = BigInt(modulus);
+
+      while (exp > 0n) {
+        if (exp & 1n) result = (result * b) % mod;
+        b = (b * b) % mod;
+        exp >>= 1n;
+      }
+
+      return Number(result);
+    }
+
+    function powerTrace(base, exponent, modulus) {
+      const lines = [];
+      let result = 1n;
+      let b = BigInt(base) % BigInt(modulus);
+      let exp = BigInt(exponent);
+      const mod = BigInt(modulus);
+      let power = 1;
+
+      lines.push(`開始: 結果 = 1, 土台 = ${base} mod ${modulus} = ${Number(b)}`);
+
+      while (exp > 0n) {
+        if (exp & 1n) {
+          const before = result;
+          result = (result * b) % mod;
+          lines.push(`${power}の位を使う: ${Number(before)} × ${Number(b)} mod ${modulus} = ${Number(result)}`);
+        } else {
+          lines.push(`${power}の位は使わない`);
+        }
+
+        exp >>= 1n;
+        if (exp > 0n) {
+          const beforeBase = b;
+          b = (b * b) % mod;
+          power *= 2;
+          lines.push(`次の土台: ${Number(beforeBase)}² mod ${modulus} = ${Number(b)}`);
+        }
+      }
+
+      lines.push(`答え: ${base}^${exponent} mod ${modulus} = ${Number(result)}`);
+      return lines;
+    }
+
+    function simplePowerLine(base, exponent) {
+      if (exponent < 2 || exponent > 6) return "";
+      const factors = Array.from({ length: exponent }, () => base).join(" × ");
+      return `<p><code>${base}^${exponent} = ${factors}</code></p>`;
+    }
+
+    function listHtml(lines) {
+      return `<ol>${lines.map((line) => `<li>${line}</li>`).join("")}</ol>`;
+    }
+
+    function statusItem(ok, text) {
+      return `
+        <div class="status-item">
+          <span class="mark ${ok ? "" : "bad"}">${ok ? "✓" : "!"}</span>
+          <span>${text}</span>
+        </div>
+      `;
+    }
+
+    function updateRangeMax(n, message) {
+      const max = Math.max(1, n - 1);
+      inputs.range.max = String(max);
+      inputs.message.max = String(max);
+      inputs.range.value = String(Math.min(message, max));
+    }
+
+    function render() {
+      let p = intValue(inputs.p, 3);
+      let q = intValue(inputs.q, 11);
+      let e = intValue(inputs.e, 3);
+      let message = intValue(inputs.message, 7);
+
+      const n = p * q;
+      const phi = (p - 1) * (q - 1);
+      const pPrime = isPrime(p);
+      const qPrime = isPrime(q);
+      const distinctPrimes = pPrime && qPrime && p !== q;
+      const eInRange = e > 1 && e < phi;
+      const eCoprime = gcd(e, phi) === 1;
+      const inverseInfo = distinctPrimes && eInRange && eCoprime ? modInverse(e, phi) : null;
+      const d = inverseInfo ? inverseInfo.inverse : null;
+
+      if (n > 1) {
+        message = Math.max(0, Math.min(message, n - 1));
+        updateRangeMax(n, message);
+        if (String(message) !== inputs.message.value) inputs.message.value = String(message);
+      }
+
+      const valid = distinctPrimes && eInRange && eCoprime && d !== null;
+      const cipher = valid ? modPow(message, e, n) : null;
+      const decrypted = valid ? modPow(cipher, d, n) : null;
+
+      $("nValue").textContent = Number.isFinite(n) ? n : "-";
+      $("phiValue").textContent = Number.isFinite(phi) ? phi : "-";
+      $("publicKeyValue").textContent = valid ? `(${e}, ${n})` : "-";
+      $("privateKeyValue").textContent = valid ? `(${d}, ${n})` : "-";
+      $("flowMessage").textContent = message;
+      $("flowCipher").textContent = valid ? cipher : "-";
+      $("flowDecrypted").textContent = valid ? decrypted : "-";
+      $("flowResultText").textContent = valid && decrypted === message ? "元の数字に戻りました。" : "入力条件を直すと計算できます。";
+
+      $("statusList").innerHTML = [
+        statusItem(pPrime, `p = ${p} は${pPrime ? "素数です" : "素数ではありません"}`),
+        statusItem(qPrime, `q = ${q} は${qPrime ? "素数です" : "素数ではありません"}`),
+        statusItem(p !== q, "p と q は別々の素数にします"),
+        statusItem(eInRange, `e = ${e} は 1 < e < φ(n) の範囲${eInRange ? "です" : "ではありません"}`),
+        statusItem(eCoprime, `gcd(e, φ(n)) = gcd(${e}, ${phi}) = ${gcd(e, phi)}${eCoprime ? " なのでOK" : " なのでNG"}`)
+      ].join("");
+
+      $("mainNotice").className = valid ? "notice ok" : "notice bad";
+      $("mainNotice").innerHTML = valid
+        ? `<strong>計算できます。</strong> 公開鍵は <span class="pill small-pill">(${e}, ${n})</span>、秘密鍵は <span class="pill small-pill">(${d}, ${n})</span> です。`
+        : `<strong>まだ計算できません。</strong> p/q は別々の素数、e は φ(n) と互いに素な範囲内の数にしてください。`;
+
+      $("keyFormula").innerHTML = `
+        p = <span class="pill">${p}</span><br>
+        q = <span class="pill">${q}</span><br>
+        n = p × q = ${p} × ${q} = <span class="pill">${n}</span><br>
+        φ(n) = (p - 1)(q - 1) = (${p} - 1)(${q} - 1) = <span class="pill">${phi}</span><br>
+        e = <span class="pill">${e}</span>
+      `;
+
+      if (inverseInfo) {
+        const smallSearch = [];
+        const limit = Math.min(phi, 20);
+        for (let candidate = 1; candidate <= limit; candidate += 1) {
+          const remainder = (e * candidate) % phi;
+          smallSearch.push(`${e} × ${candidate} = ${e * candidate} → ${e * candidate} mod ${phi} = ${remainder}${remainder === 1 ? " なので d" : ""}`);
+          if (remainder === 1) break;
+        }
+
+        $("inverseSteps").innerHTML = `
+          <p><code>e × d ≡ 1 (mod φ(n))</code> になる d を探します。</p>
+          ${listHtml(smallSearch)}
+          <p>したがって <span class="pill">d = ${d}</span> です。</p>
+          <details>
+            <summary>互除法でも確認する</summary>
+            ${listHtml(inverseInfo.trace.rows)}
+            <p><code>${e} × ${d} mod ${phi} = ${(e * d) % phi}</code></p>
+          </details>
+        `;
+      } else {
+        $("inverseSteps").innerHTML = "<p>条件がそろっていないため、秘密指数 d を作れません。</p>";
+      }
+
+      $("keyExplanation").innerHTML = valid
+        ? `公開するのは <span class="pill small-pill">(${e}, ${n})</span> です。秘密にするのは <span class="pill small-pill">d = ${d}</span> です。`
+        : "入力条件を直すと、公開鍵と秘密鍵がここに表示されます。";
+
+      if (valid) {
+        $("encryptFormula").innerHTML = `
+          C = M^e mod n<br>
+          C = ${message}^${e} mod ${n}<br>
+          C = <span class="pill">${cipher}</span>
+        `;
+        $("encryptSteps").innerHTML = `
+          ${simplePowerLine(message, e)}
+          ${listHtml(powerTrace(message, e, n))}
+        `;
+        $("decryptFormula").innerHTML = `
+          M' = C^d mod n<br>
+          M' = ${cipher}^${d} mod ${n}<br>
+          M' = <span class="pill">${decrypted}</span>
+        `;
+        $("decryptSteps").innerHTML = `
+          ${simplePowerLine(cipher, d)}
+          ${listHtml(powerTrace(cipher, d, n))}
+        `;
+        $("senderPublicKey").textContent = `(${e}, ${n})`;
+        $("publicKeyAgain").textContent = `(${e}, ${n})`;
+        $("privateKeyAgain").textContent = `(${d}, ${n})`;
+        $("whyText").innerHTML = `
+          e × d = ${e} × ${d} = ${e * d} で、これを φ(n) = ${phi} で割ると余りが ${(e * d) % phi} です。
+          つまり <code>e × d ≡ 1 (mod φ(n))</code> なので、暗号化で上げた指数を秘密鍵で戻せます。
+        `;
+      } else {
+        $("encryptFormula").textContent = "入力条件を直すと暗号化式が出ます。";
+        $("encryptSteps").textContent = "p/q/e の条件を確認してください。";
+        $("decryptFormula").textContent = "入力条件を直すと復号式が出ます。";
+        $("decryptSteps").textContent = "秘密指数 d が作れると復号過程が出ます。";
+        $("senderPublicKey").textContent = "-";
+        $("publicKeyAgain").textContent = "-";
+        $("privateKeyAgain").textContent = "-";
+        $("whyText").textContent = "秘密指数 d が作れる条件になると、元に戻る理由を表示します。";
+      }
+    }
+
+    function syncFromRange() {
+      inputs.message.value = inputs.range.value;
+      render();
+    }
+
+    function syncFromMessage() {
+      inputs.range.value = inputs.message.value || "0";
+      render();
+    }
+
+    Object.values(inputs).forEach((input) => {
+      input.addEventListener("input", input === inputs.range ? syncFromRange : syncFromMessage);
+    });
+
+    document.querySelectorAll("[data-preset]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const preset = presets[button.dataset.preset];
+        inputs.p.value = preset.p;
+        inputs.q.value = preset.q;
+        inputs.e.value = preset.e;
+        inputs.message.value = preset.message;
+        inputs.range.value = preset.message;
+        render();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
