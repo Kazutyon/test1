@@ -1,27 +1,46 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>資料を開いています...</title>
-
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J2N5R4LZY1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-J2N5R4LZY1');
-
-    window.onload = function() {
-      gtag('event', 'open_sheet');
-
-      setTimeout(function() {
-        location.href = "https://docs.google.com/spreadsheets/d/1sYS4XgTsx5LqSV4d-2msQ-XDMdR5PFOghmabRyHotJo/edit?usp=sharing";
-      }, 800);
-    };
-  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RSA 手動計算デモ</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <p>資料を開いています...</p>
+  <header>
+    <h1>RSA 手動計算デモ</h1>
+    <p>素数 p, q と公開指数 e を入力し、鍵生成・暗号化・復号・署名・検証を体験できます。</p>
+  </header>
+
+  <section id="key-gen">
+    <h2>🔐 鍵生成</h2>
+    <div class="input-grid">
+      <label>素数 p: <input type="number" id="p" min="2" required /></label>
+      <label>素数 q: <input type="number" id="q" min="2" required /></label>
+      <label>公開指数 e: <input type="number" id="e" min="1" required /></label>
+    </div>
+    <button id="gen-keys">鍵を生成</button>
+    <output id="keys-output" class="fade-out"></output>
+  </section>
+
+  <section id="encrypt-decrypt">
+    <h2>📨 暗号化 / 復号</h2>
+    <label>平文 (数値) : <input type="number" id="plain" min="0" required /></label>
+    <button id="encrypt">暗号化</button>
+    <output id="cipher-output" class="fade-out"></output>
+    <button id="decrypt">復号</button>
+    <output id="plain-output" class="fade-out"></output>
+  </section>
+
+  <section id="sign-verify">
+    <h2>✍️ 署名 / 検証</h2>
+    <label>署名対象 (数値): <input type="number" id="sign-msg" min="0" required /></label>
+    <button id="sign">署名</button>
+    <output id="sign-output" class="fade-out"></output>
+    <button id="verify">検証</button>
+    <output id="verify-output" class="fade-out"></output>
+  </section>
+
+  <script src="script.js"></script>
 </body>
 </html>
