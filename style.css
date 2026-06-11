@@ -1,0 +1,50 @@
+/* Premium dark theme with micro‑animations */
+:root {
+  --bg-dark: hsl(220, 15%, 12%);
+  --bg-light: hsl(0, 0%, 100%);
+  --fg-primary: hsl(210, 30%, 92%);
+  --accent: hsl(210, 70%, 55%);
+  --error: hsl(0, 70%, 55%);
+  --transition: 0.25s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  body { background: var(--bg-dark); color: var(--fg-primary); }
+  input, button { background: hsl(220, 15%, 20%); color: var(--fg-primary); border: 1px solid hsl(220, 10%, 30%); }
+}
+@media (prefers-color-scheme: light) {
+  body { background: var(--bg-light); color: #222; }
+  input, button { background: #f3f3f3; color: #222; border: 1px solid #ccc; }
+}
+
+body { font-family: 'Inter', system-ui, sans-serif; margin:0; padding:1.5rem; line-height:1.6; }
+header { text-align:center; padding:2rem 0; background: linear-gradient(135deg, var(--accent), hsl(210, 80%, 40%)); color:#fff; }
+main { max-width: 800px; margin:2rem auto; padding:0 1rem; }
+.grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:1rem; margin:1rem 0; }
+label { display:flex; flex-direction:column; font-weight:600; }
+input { padding:0.5rem; margin-top:0.3rem; border-radius:4px; transition: var(--transition); }
+input:focus { outline:none; border-color: var(--accent); box-shadow:0 0 0 2px hsla(210,70%,55%,0.2); }
+button { margin-top:0.5rem; padding:0.6rem 1rem; border:none; border-radius:4px; cursor:pointer; background: var(--accent); color:#fff; font-weight:600; transition: var(--transition); }
+button:hover { background: hsl(210, 70%, 45%); }
+output { display:block; margin-top:0.5rem; padding:0.5rem; background: hsla(0,0%,0%,0.1); border-radius:4px; min-height:1.2rem; }
+.fade { opacity:0; transition: opacity 0.4s var(--transition); }
+.fade.show { opacity:1; }
+hr { border:none; border-top:1px solid hsla(0,0%,0%,0.2); margin:2.5rem 0; }
+section { margin: 2rem 0; }
+.log-area {
+  background: hsla(210,30%,15%,0.2);
+  color: var(--fg-primary);
+  padding: 1rem;
+  max-height: 250px;
+  overflow-y: auto;
+  font-family: "Source Code Pro", monospace;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+.log-area::-webkit-scrollbar {
+  width: 8px;
+}
+.log-area::-webkit-scrollbar-thumb {
+  background: hsla(210,70%,55%,0.4);
+  border-radius: 4px;
+}
