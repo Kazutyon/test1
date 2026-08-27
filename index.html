@@ -1,0 +1,2183 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python Chapter 4–7 実践復習ラボ</title>
+<style>
+:root {
+  --bg:#f5f7fb; --panel:#ffffff; --ink:#172033; --muted:#64748b;
+  --accent:#2563eb; --accent2:#7c3aed; --good:#15803d; --warn:#b45309; --bad:#b91c1c;
+  --line:#dbe3ef; --soft:#eef4ff; --code:#111827; --codeink:#e5e7eb;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans JP",sans-serif;line-height:1.65}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.layout{display:grid;grid-template-columns:300px 1fr;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;overflow:auto;background:#fff;border-right:1px solid var(--line);padding:18px}
+.brand{padding:8px 8px 18px}
+.brand h1{font-size:18px;margin:0 0 4px}
+.brand p{margin:0;color:var(--muted);font-size:13px}
+.progress-box{background:var(--soft);padding:12px;border-radius:14px;margin-bottom:16px}
+.progress-track{height:9px;background:#dbeafe;border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.3s}
+.progress-text{display:flex;justify-content:space-between;font-size:12px;margin-top:6px}
+.lesson-link{width:100%;display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;text-align:left;border:0;background:transparent;padding:9px 7px;border-radius:10px;color:var(--ink)}
+.lesson-link:hover,.lesson-link.active{background:var(--soft)}
+.lesson-link span{font-size:11px;color:var(--muted)}
+.lesson-link b{font-size:13px;font-weight:650}
+.lesson-link small{font-size:11px;color:var(--muted)}
+.main{min-width:0}
+.hero{padding:52px max(28px,6vw) 38px;background:linear-gradient(135deg,#eaf2ff,#f7efff);border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(30px,5vw,58px);line-height:1.08;margin:10px 0 14px;letter-spacing:-.03em}
+.hero p{max-width:850px;font-size:17px;color:#475569}
+.hero .tag{display:inline-block;padding:5px 10px;border-radius:99px;background:#fff;border:1px solid #cbd5e1;font-weight:700;font-size:12px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.primary,.secondary{border:0;border-radius:12px;padding:12px 16px;font-weight:700}
+.primary{background:var(--accent);color:#fff}
+.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.content{max-width:1080px;margin:auto;padding:28px}
+.study-plan,.lesson,.review{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;margin:0 0 26px;box-shadow:0 8px 30px rgba(15,23,42,.04)}
+.study-plan h2,.lesson h2,.review h2{margin:5px 0 8px}
+.plan-table{width:100%;border-collapse:collapse;margin-top:14px}
+.plan-table th,.plan-table td{border-bottom:1px solid var(--line);padding:10px;text-align:left;font-size:14px}
+.jump-mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 9px}
+.lesson-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.chapter-pill{display:inline-block;background:#e0e7ff;color:#3730a3;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.06em}
+.source{color:var(--muted);font-size:12px;margin:0}
+.status-badge{padding:6px 10px;border-radius:999px;background:#f1f5f9;color:#475569;font-size:12px;font-weight:700;white-space:nowrap}
+.status-badge.done{background:#dcfce7;color:#166534}
+.goal{border-left:4px solid var(--accent);background:var(--soft);padding:12px 14px;border-radius:0 10px 10px 0;margin:18px 0}
+.concept-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
+.concept-card{border:1px solid var(--line);border-radius:14px;padding:16px}
+.concept-card h3{font-size:15px;margin:0 0 9px}
+.concept-card ul,.concept-card ol{margin:0;padding-left:20px}
+.workflow{background:#fbfbfe}
+.playground{margin-top:18px;border:1px solid #c7d2fe;border-radius:15px;overflow:hidden}
+.playground-top{display:flex;justify-content:space-between;padding:14px 16px;background:#eef2ff}
+.playground-top h3,.playground-top p{margin:0}
+.playground-top p{font-size:12px;color:#64748b}
+.time{font-size:12px;color:#475569}
+.editor{width:100%;min-height:260px;display:block;border:0;outline:0;background:var(--code);color:var(--codeink);padding:18px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:14px;line-height:1.6;resize:vertical;tab-size:4}
+.actions{display:flex;gap:8px;flex-wrap:wrap;padding:12px;background:#f8fafc;border-top:1px solid var(--line)}
+.actions button,.quiz-btn,.next-btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 11px;font-weight:650}
+.run-btn{background:var(--accent)!important;color:#fff;border-color:var(--accent)!important}
+.check-btn{background:#ecfdf5!important;color:#166534!important}
+.hint-box,.solution-box{padding:12px 16px;background:#fff7ed;border-top:1px solid #fed7aa}
+.solution-box{background:#f0fdf4;border-color:#bbf7d0}
+.solution-box pre{white-space:pre-wrap}
+.hidden{display:none}
+.output-wrap{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}
+.output-wrap>div{padding:12px;min-width:0}
+.output-wrap>div+div{border-left:1px solid var(--line)}
+.output-wrap pre{margin:7px 0 0;background:#f8fafc;padding:12px;border-radius:9px;white-space:pre-wrap;min-height:70px;overflow:auto;font-family:ui-monospace,Consolas,monospace}
+.judge{padding:0 12px 12px;font-weight:750}
+.judge.good{color:var(--good)} .judge.bad{color:var(--bad)} .judge.warn{color:var(--warn)}
+.quiz{margin-top:18px;padding:16px;border:1px solid var(--line);border-radius:14px}
+.quiz h3{margin:0}
+.choices{display:grid;gap:7px;margin:10px 0}
+.choices label{padding:8px 10px;border:1px solid var(--line);border-radius:9px}
+.quiz-result{margin-left:8px;font-weight:700}
+.complete-row{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)}
+.complete-check{font-weight:700}
+.next-btn{background:#f8fafc}
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.review-grid article{border:1px solid var(--line);padding:14px;border-radius:12px}
+.review-grid p{margin:6px 0}
+.runner-state{position:fixed;right:18px;bottom:18px;background:#111827;color:#fff;padding:9px 12px;border-radius:10px;font-size:12px;box-shadow:0 8px 30px #0003;z-index:10}
+kbd{background:#e2e8f0;border-radius:5px;padding:1px 5px}
+.notice{font-size:13px;color:#475569;background:#fffbeb;border:1px solid #fde68a;padding:10px 12px;border-radius:10px;margin-top:16px}
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .nav-list{display:none}
+  .concept-grid,.output-wrap,.review-grid{grid-template-columns:1fr}
+  .output-wrap>div+div{border-left:0;border-top:1px solid var(--line)}
+  .content{padding:16px}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand">
+    <h1>Python 復習ラボ</h1>
+    <p>Chapter 4 → 7 / 手を動かして定着</p>
+  </div>
+  <div class="progress-box">
+    <b>進捗</b>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-text"><span id="progressCount">0 / 22</span><span id="progressPct">0%</span></div>
+  </div>
+  <div class="nav-list">
+    <button class="lesson-link" data-target="c4-1"><span>01</span><b>リストの基本</b><small>30分</small></button><button class="lesson-link" data-target="c4-2"><span>02</span><b>リストは変更できる・参照に注意</b><small>35分</small></button><button class="lesson-link" data-target="c4-3"><span>03</span><b>リストの追加・削除・文字列との変換</b><small>45分</small></button><button class="lesson-link" data-target="c4-4"><span>04</span><b>タプル</b><small>30分</small></button><button class="lesson-link" data-target="c4-5"><span>05</span><b>集合 set</b><small>35分</small></button><button class="lesson-link" data-target="c4-6"><span>06</span><b>辞書 dict</b><small>45分</small></button><button class="lesson-link" data-target="c5-1"><span>07</span><b>if / elif / else</b><small>40分</small></button><button class="lesson-link" data-target="c5-2"><span>08</span><b>条件式（三項演算子）</b><small>25分</small></button><button class="lesson-link" data-target="c5-3"><span>09</span><b>for・イテラブル・range</b><small>45分</small></button><button class="lesson-link" data-target="c5-4"><span>10</span><b>enumerate と reversed</b><small>35分</small></button><button class="lesson-link" data-target="c5-5"><span>11</span><b>while・continue・break・else</b><small>50分</small></button><button class="lesson-link" data-target="c5-6"><span>12</span><b>pass</b><small>15分</small></button><button class="lesson-link" data-target="c6-1"><span>13</span><b>関数 def と引数</b><small>40分</small></button><button class="lesson-link" data-target="c6-2"><span>14</span><b>return</b><small>35分</small></button><button class="lesson-link" data-target="c6-3"><span>15</span><b>位置・キーワード・デフォルト引数</b><small>45分</small></button><button class="lesson-link" data-target="c6-4"><span>16</span><b>*args / **kwargs とアンパック</b><small>50分</small></button><button class="lesson-link" data-target="c6-5"><span>17</span><b>スコープ・global・nonlocal</b><small>50分</small></button><button class="lesson-link" data-target="c7-1"><span>18</span><b>クラスとオブジェクトの考え方</b><small>35分</small></button><button class="lesson-link" data-target="c7-2"><span>19</span><b>独自クラス・属性・__init__</b><small>55分</small></button><button class="lesson-link" data-target="c7-3"><span>20</span><b>メソッド・属性の扱い・クラス属性</b><small>50分</small></button><button class="lesson-link" data-target="c7-4"><span>21</span><b>継承・オーバーライド・super</b><small>60分</small></button><button class="lesson-link" data-target="c7-5"><span>22</span><b>多重継承とMRO</b><small>40分</small></button>
+  </div>
+</aside>
+
+<main class="main">
+<header class="hero">
+  <span class="tag">週末集中版・約 10〜12時間</span>
+  <h1>読むだけをやめて、<br>コードを書いて覚える。</h1>
+  <p>Chapter 4〜7を、説明 → 予想 → コーディング → 実行 → 判定 → 確認クイズの順で復習する教材です。進捗と編集したコードはブラウザに保存されます。</p>
+  <div class="hero-actions">
+    <button class="primary" data-target="study-plan">週末プランを見る</button>
+    <button class="secondary" data-target="c4-1">Chapter 4から始める</button>
+    <button class="secondary" data-target="c5-4">enumerateを復習</button>
+  </div>
+  <div class="notice">コード実行にはブラウザ上で Python を動かす Pyodide を使用します。初回だけインターネット接続が必要です。読み込み後は各「実行」ボタンでコードを試せます。</div>
+</header>
+
+<div class="content">
+<section class="study-plan" id="study-plan">
+  <span class="chapter-pill">STUDY PLAN</span>
+  <h2>週末の進め方</h2>
+  <p><b>基準は「読んだ」ではなく「自分で書けた」</b>。各レッスンで実行結果を先に予想してからコードを直し、判定まで行います。詰まった項目だけ日曜最後に再挑戦します。</p>
+  <table class="plan-table">
+    <thead><tr><th>時間</th><th>範囲</th><th>内容</th><th></th></tr></thead>
+    <tbody>
+<tr><td>土曜 09:00–10:50</td><td>Chapter 4 前半</td><td>リスト → タプル</td><td><button class="jump-mini" data-target="c4-1">開始</button></td></tr>
+
+<tr><td>土曜 11:10–12:20</td><td>Chapter 4 後半</td><td>set → dict</td><td><button class="jump-mini" data-target="c4-5">開始</button></td></tr>
+
+<tr><td>土曜 14:00–16:20</td><td>Chapter 5</td><td>if → for → enumerate</td><td><button class="jump-mini" data-target="c5-1">開始</button></td></tr>
+
+<tr><td>土曜 16:40–17:50</td><td>Chapter 5 仕上げ</td><td>while / break / continue / pass</td><td><button class="jump-mini" data-target="c5-5">開始</button></td></tr>
+
+<tr><td>日曜 09:00–11:50</td><td>Chapter 6</td><td>関数・return・引数</td><td><button class="jump-mini" data-target="c6-1">開始</button></td></tr>
+
+<tr><td>日曜 13:00–13:50</td><td>Chapter 6</td><td>scope</td><td><button class="jump-mini" data-target="c6-5">開始</button></td></tr>
+
+<tr><td>日曜 14:10–17:20</td><td>Chapter 7</td><td>class → 継承</td><td><button class="jump-mini" data-target="c7-1">開始</button></td></tr>
+
+<tr><td>日曜 17:30–18:00</td><td>総復習</td><td>赤・黄だけやり直す</td><td><button class="jump-mini" data-target="c4-1">開始</button></td></tr>
+</tbody>
+  </table>
+  <p><b>合格ライン：</b>コード問題を自力で通過 ＋ 30秒確認クイズに正解。解答を見た場合は、いったんリセットしてもう一度自力で書く。</p>
+</section>
+
+
+<section class="lesson" id="c4-1" data-lesson="c4-1" data-chapter="4">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 4</span>
+      <h2>リストの基本</h2>
+      <p class="source">Chapter 4 p.130–132</p>
+    </div>
+    <div class="status-badge" id="status-c4-1">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>リストを作り、インデックスとスライスで値を取り出せる。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>リストは複数の値を順番にまとめるデータ構造。角括弧 [] を使う。</li><li>先頭のインデックスは 0。後ろからは -1, -2… と数えられる。</li><li>スライス a[開始:終了] の終了位置は含まれない。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c4-1" data-expected="milk
+[&#x27;tea&#x27;, &#x27;milk&#x27;]">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 30分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">drinks = [&quot;coffee&quot;, &quot;tea&quot;, &quot;milk&quot;, &quot;water&quot;]
+
+# 1) 3番目の要素を表示
+print(____)
+
+# 2) tea と milk をスライスで表示
+print(____)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">3番目の要素でもインデックスは 2。スライスの終了位置は含まれません。</div>
+    <div class="solution-box hidden"><pre>drinks = [&quot;coffee&quot;, &quot;tea&quot;, &quot;milk&quot;, &quot;water&quot;]
+
+print(drinks[2])
+print(drinks[1:3])
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">milk
+[&#x27;tea&#x27;, &#x27;milk&#x27;]</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-id="c4-1">
+    <h3>🧠 30秒確認</h3>
+    <p>drinks[1:3] で取り出されるのは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c4-1" value="0"> <span>1番目〜3番目の3個</span></label><label><input type="radio" name="quiz-c4-1" value="1"> <span>2番目〜3番目の2個</span></label><label><input type="radio" name="quiz-c4-1" value="2"> <span>2番目〜4番目の3個</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c4-1"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c4-2" data-lesson="c4-2" data-chapter="4">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 4</span>
+      <h2>リストは変更できる・参照に注意</h2>
+      <p class="source">Chapter 4 p.133–137</p>
+    </div>
+    <div class="status-badge" id="status-c4-2">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>リストの変更と、代入・コピーの違いを説明できる。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>リストはミュータブルなので、要素を書き換えられる。</li><li>b = a はリストそのものをコピーせず、同じオブジェクトを参照する。</li><li>別のリストにしたいときは a[:] や a.copy() を使う。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c4-2" data-expected="[&#x27;coffee&#x27;, &#x27;tea&#x27;, &#x27;soda&#x27;]
+[&#x27;coffee&#x27;, &#x27;tea&#x27;, &#x27;milk&#x27;]">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 35分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">a = [&quot;coffee&quot;, &quot;tea&quot;, &quot;milk&quot;]
+b = a
+c = a.copy()
+
+b[-1] = &quot;soda&quot;
+
+print(a)
+print(c)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">b と a は同じリストを参照。c は別のリストです。</div>
+    <div class="solution-box hidden"><pre>a = [&quot;coffee&quot;, &quot;tea&quot;, &quot;milk&quot;]
+b = a
+c = a.copy()
+
+b[-1] = &quot;soda&quot;
+
+print(a)
+print(c)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">[&#x27;coffee&#x27;, &#x27;tea&#x27;, &#x27;soda&#x27;]
+[&#x27;coffee&#x27;, &#x27;tea&#x27;, &#x27;milk&#x27;]</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="0" data-id="c4-2">
+    <h3>🧠 30秒確認</h3>
+    <p>b = a の直後に b[0] を変更すると a[0] は？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c4-2" value="0"> <span>変わる</span></label><label><input type="radio" name="quiz-c4-2" value="1"> <span>変わらない</span></label><label><input type="radio" name="quiz-c4-2" value="2"> <span>エラーになる</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c4-2"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c4-3" data-lesson="c4-3" data-chapter="4">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 4</span>
+      <h2>リストの追加・削除・文字列との変換</h2>
+      <p class="source">Chapter 4 p.138–149</p>
+    </div>
+    <div class="status-badge" id="status-c4-3">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>append / extend / pop / remove / split / join を使い分ける。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>append(x) は要素を1個追加、extend(iterable) は複数要素を追加。</li><li>pop(i) は指定位置を削除して、その値を返す。remove(x) は値を指定して削除。</li><li>split は文字列→リスト、join はリスト→文字列。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c4-3" data-expected="burger:potato:juice:cake:coffee">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 45分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">menu = [&quot;burger&quot;, &quot;potato&quot;]
+
+# juice を1個追加
+____
+
+# cake と coffee をまとめて追加
+____
+
+# &quot;:&quot; で連結して表示
+print(____)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">1個なら append、複数なら extend。join は区切り文字.join(リスト)。</div>
+    <div class="solution-box hidden"><pre>menu = [&quot;burger&quot;, &quot;potato&quot;]
+
+menu.append(&quot;juice&quot;)
+menu.extend([&quot;cake&quot;, &quot;coffee&quot;])
+
+print(&quot;:&quot;.join(menu))
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">burger:potato:juice:cake:coffee</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="0" data-id="c4-3">
+    <h3>🧠 30秒確認</h3>
+    <p>remove と pop の大きな違いは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c4-3" value="0"> <span>removeは値を指定、popは位置を指定でき戻り値もある</span></label><label><input type="radio" name="quiz-c4-3" value="1"> <span>removeだけリストを変更する</span></label><label><input type="radio" name="quiz-c4-3" value="2"> <span>popは文字列専用</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c4-3"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c4-4" data-lesson="c4-4" data-chapter="4">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 4</span>
+      <h2>タプル</h2>
+      <p class="source">Chapter 4 p.150–161</p>
+    </div>
+    <div class="status-badge" id="status-c4-4">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>タプルの特徴とアンパックを使える。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>タプルは順番を持つが、作成後に要素を変更できない（イミュータブル）。</li><li>1要素のタプルは (値,) のようにカンマが必要。</li><li>a, b = (10, 20) のようにアンパックできる。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c4-4" data-expected="apple
+180">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 30分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">product = (&quot;apple&quot;, 180)
+
+name, price = ____
+
+print(name)
+print(price)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">右側の2要素を左側の2変数に順番に代入します。</div>
+    <div class="solution-box hidden"><pre>product = (&quot;apple&quot;, 180)
+
+name, price = product
+
+print(name)
+print(price)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">apple
+180</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-id="c4-4">
+    <h3>🧠 30秒確認</h3>
+    <p>1要素だけのタプルとして正しいのは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c4-4" value="0"> <span>(10)</span></label><label><input type="radio" name="quiz-c4-4" value="1"> <span>(10,)</span></label><label><input type="radio" name="quiz-c4-4" value="2"> <span>[10,)</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c4-4"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c4-5" data-lesson="c4-5" data-chapter="4">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 4</span>
+      <h2>集合 set</h2>
+      <p class="source">Chapter 4 p.162–181</p>
+    </div>
+    <div class="status-badge" id="status-c4-5">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>重複除去・in判定・集合演算を使える。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>set は重複を持たず、要素の順序は保証されない。</li><li>in / not in で値の有無を素早く調べられる。</li><li>和集合・積集合・差集合などの集合演算ができる。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c4-5" data-expected="True
+{&#x27;python&#x27;}">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 35分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">a = {&quot;python&quot;, &quot;java&quot;, &quot;sql&quot;}
+b = {&quot;python&quot;, &quot;html&quot;}
+
+print(&quot;python&quot; in a)
+
+# 両方に含まれるものを表示
+print(____)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">積集合は &amp; を使えます。</div>
+    <div class="solution-box hidden"><pre>a = {&quot;python&quot;, &quot;java&quot;, &quot;sql&quot;}
+b = {&quot;python&quot;, &quot;html&quot;}
+
+print(&quot;python&quot; in a)
+print(a &amp; b)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">True
+{&#x27;python&#x27;}</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="2" data-id="c4-5">
+    <h3>🧠 30秒確認</h3>
+    <p>set の特徴として正しいのは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c4-5" value="0"> <span>重複を保持する</span></label><label><input type="radio" name="quiz-c4-5" value="1"> <span>順番が必ず保存される</span></label><label><input type="radio" name="quiz-c4-5" value="2"> <span>同じ値を重複して保持しない</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c4-5"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c4-6" data-lesson="c4-6" data-chapter="4">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 4</span>
+      <h2>辞書 dict</h2>
+      <p class="source">Chapter 4 p.182–192</p>
+    </div>
+    <div class="status-badge" id="status-c4-6">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>キーと値の対応を作り、取得・追加・削除・走査できる。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>辞書は key: value の組を保存する。</li><li>dict[key] は存在しないキーで KeyError。get(key, default) なら安全に取得できる。</li><li>keys(), values(), items() でキー・値・組を取り出せる。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c4-6" data-expected="Unknown
+ja Japanese
+en English
+fr French">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 45分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">lang = {&quot;ja&quot;: &quot;Japanese&quot;, &quot;en&quot;: &quot;English&quot;}
+
+# fr を追加
+____
+
+print(lang.get(&quot;de&quot;, &quot;Unknown&quot;))
+
+for key, value in lang.items():
+    print(key, value)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">辞書への追加は 辞書[新しいキー] = 値。</div>
+    <div class="solution-box hidden"><pre>lang = {&quot;ja&quot;: &quot;Japanese&quot;, &quot;en&quot;: &quot;English&quot;}
+
+lang[&quot;fr&quot;] = &quot;French&quot;
+
+print(lang.get(&quot;de&quot;, &quot;Unknown&quot;))
+
+for key, value in lang.items():
+    print(key, value)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">Unknown
+ja Japanese
+en English
+fr French</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="0" data-id="c4-6">
+    <h3>🧠 30秒確認</h3>
+    <p>存在しないキーでも例外を避けて値を取得しやすいのは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c4-6" value="0"> <span>get</span></label><label><input type="radio" name="quiz-c4-6" value="1"> <span>append</span></label><label><input type="radio" name="quiz-c4-6" value="2"> <span>index</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c4-6"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c5-1" data-lesson="c5-1" data-chapter="5">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 5</span>
+      <h2>if / elif / else</h2>
+      <p class="source">Chapter 5 p.194–202</p>
+    </div>
+    <div class="status-badge" id="status-c5-1">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>条件に応じて処理を分岐できる。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>if は条件が True のときだけ処理する。</li><li>else はそれ以外、elif は別の条件を追加する。</li><li>Pythonではインデントがブロックを表す。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c5-1" data-expected="B">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 40分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">score = 78
+
+if score &gt;= 90:
+    print(&quot;A&quot;)
+elif ____:
+    print(&quot;B&quot;)
+else:
+    print(&quot;C&quot;)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">78点を B にしたいので、70以上を条件にします。</div>
+    <div class="solution-box hidden"><pre>score = 78
+
+if score &gt;= 90:
+    print(&quot;A&quot;)
+elif score &gt;= 70:
+    print(&quot;B&quot;)
+else:
+    print(&quot;C&quot;)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">B</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-id="c5-1">
+    <h3>🧠 30秒確認</h3>
+    <p>elif は何のため？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c5-1" value="0"> <span>繰り返すため</span></label><label><input type="radio" name="quiz-c5-1" value="1"> <span>if がFalseだったとき別条件を調べるため</span></label><label><input type="radio" name="quiz-c5-1" value="2"> <span>関数を終了するため</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c5-1"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c5-2" data-lesson="c5-2" data-chapter="5">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 5</span>
+      <h2>条件式（三項演算子）</h2>
+      <p class="source">Chapter 5 p.203–206</p>
+    </div>
+    <div class="status-badge" id="status-c5-2">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>短い条件分岐を条件式で書ける。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>Pythonの条件式は「True側 if 条件 else False側」。</li><li>短い値の選択には便利だが、複雑なら通常の if 文の方が読みやすい。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c5-2" data-expected="adult">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 25分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">age = 20
+
+message = ____ if age &gt;= 18 else ____
+print(message)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">条件の左がTrue側、elseの右がFalse側。</div>
+    <div class="solution-box hidden"><pre>age = 20
+
+message = &quot;adult&quot; if age &gt;= 18 else &quot;minor&quot;
+print(message)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">adult</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-id="c5-2">
+    <h3>🧠 30秒確認</h3>
+    <p>Pythonの条件式の並びは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c5-2" value="0"> <span>条件 ? A : B</span></label><label><input type="radio" name="quiz-c5-2" value="1"> <span>A if 条件 else B</span></label><label><input type="radio" name="quiz-c5-2" value="2"> <span>if 条件 then A else B</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c5-2"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c5-3" data-lesson="c5-3" data-chapter="5">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 5</span>
+      <h2>for・イテラブル・range</h2>
+      <p class="source">Chapter 5 p.207–221</p>
+    </div>
+    <div class="status-badge" id="status-c5-3">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>for と range を使って繰り返しを書ける。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>for はイテラブルから要素を1個ずつ取り出して処理する。</li><li>文字列・リスト・タプル・辞書・range などがイテラブル。</li><li>range(開始, 終了, 増分) の終了値は含まれない。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c5-3" data-expected="15">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 45分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">total = 0
+
+# 1〜5を順に足す
+for n in ____:
+    total += n
+
+print(total)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">1〜5なら終了値は6にする。</div>
+    <div class="solution-box hidden"><pre>total = 0
+
+for n in range(1, 6):
+    total += n
+
+print(total)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">15</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="0" data-id="c5-3">
+    <h3>🧠 30秒確認</h3>
+    <p>range(2, 8, 2) が作る値は？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c5-3" value="0"> <span>2,4,6</span></label><label><input type="radio" name="quiz-c5-3" value="1"> <span>2,4,6,8</span></label><label><input type="radio" name="quiz-c5-3" value="2"> <span>2,3,4,5,6,7</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c5-3"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c5-4" data-lesson="c5-4" data-chapter="5">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 5</span>
+      <h2>enumerate と reversed</h2>
+      <p class="source">Chapter 5 p.222–225</p>
+    </div>
+    <div class="status-badge" id="status-c5-4">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>番号付き走査と逆順走査を使える。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>enumerate(iterable, start) は「番号と要素」を同時に取り出せる。</li><li>start を指定すると表示用番号を 1 や 10 から始められる。</li><li>reversed() は逆順に繰り返す。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c5-4" data-expected="1 coffee
+2 tea
+3 juice">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 35分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">drinks = [&quot;coffee&quot;, &quot;tea&quot;, &quot;juice&quot;]
+
+for i, drink in enumerate(drinks, ____):
+    print(i, drink)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">1から番号を始めたいので start は 1。</div>
+    <div class="solution-box hidden"><pre>drinks = [&quot;coffee&quot;, &quot;tea&quot;, &quot;juice&quot;]
+
+for i, drink in enumerate(drinks, 1):
+    print(i, drink)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">1 coffee
+2 tea
+3 juice</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="0" data-id="c5-4">
+    <h3>🧠 30秒確認</h3>
+    <p>enumerate の番号を10から始めたいときは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c5-4" value="0"> <span>enumerate(x, 10)</span></label><label><input type="radio" name="quiz-c5-4" value="1"> <span>enumerate(10, x)</span></label><label><input type="radio" name="quiz-c5-4" value="2"> <span>range(enumerate(x),10)</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c5-4"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c5-5" data-lesson="c5-5" data-chapter="5">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 5</span>
+      <h2>while・continue・break・else</h2>
+      <p class="source">Chapter 5 p.226–237</p>
+    </div>
+    <div class="status-badge" id="status-c5-5">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>条件ベースの繰り返しと終了制御を理解する。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>while は条件が True の間繰り返す。</li><li>continue は今回の残りを飛ばして次の繰り返しへ、break はループそのものを終了。</li><li>ループの else は break されず正常終了したときに実行される。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c5-5" data-expected="1
+2
+4
+5">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 50分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">n = 0
+
+while n &lt; 5:
+    n += 1
+    if n == 3:
+        ____
+    print(n)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">3だけ表示を飛ばし、ループ自体は続けます。</div>
+    <div class="solution-box hidden"><pre>n = 0
+
+while n &lt; 5:
+    n += 1
+    if n == 3:
+        continue
+    print(n)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">1
+2
+4
+5</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-id="c5-5">
+    <h3>🧠 30秒確認</h3>
+    <p>ループそのものを途中終了するのは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c5-5" value="0"> <span>continue</span></label><label><input type="radio" name="quiz-c5-5" value="1"> <span>break</span></label><label><input type="radio" name="quiz-c5-5" value="2"> <span>pass</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c5-5"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c5-6" data-lesson="c5-6" data-chapter="5">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 5</span>
+      <h2>pass</h2>
+      <p class="source">Chapter 5 p.238</p>
+    </div>
+    <div class="status-badge" id="status-c5-6">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>pass が「何もしない文」だと理解する。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>pass は文法上ブロックが必要だが、まだ処理を書きたくないときに置ける。</li><li>continue や break と違い、ループの流れを特別に変更しない。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c5-6" data-expected="0
+1
+2">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 15分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">for i in range(3):
+    if i == 1:
+        ____
+    print(i)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">何もしない文は pass。</div>
+    <div class="solution-box hidden"><pre>for i in range(3):
+    if i == 1:
+        pass
+    print(i)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">0
+1
+2</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="2" data-id="c5-6">
+    <h3>🧠 30秒確認</h3>
+    <p>pass を実行すると？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c5-6" value="0"> <span>ループ終了</span></label><label><input type="radio" name="quiz-c5-6" value="1"> <span>次の周回へ移動</span></label><label><input type="radio" name="quiz-c5-6" value="2"> <span>特別な処理はせず次の文へ進む</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c5-6"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c6-1" data-lesson="c6-1" data-chapter="6">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 6</span>
+      <h2>関数 def と引数</h2>
+      <p class="source">Chapter 6 p.240–242</p>
+    </div>
+    <div class="status-badge" id="status-c6-1">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>関数を定義して、引数を渡して呼び出せる。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>def 関数名(仮引数): で関数を定義する。</li><li>関数呼び出し時に渡す値が実引数、定義側で受け取る名前が仮引数。</li><li>同じ処理を関数にすると、再利用しやすくなる。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c6-1" data-expected="main: pizza
+side: salad
+drink: tea">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 40分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">def order(main, side, drink):
+    print(&quot;main:&quot;, main)
+    print(&quot;side:&quot;, side)
+    print(&quot;drink:&quot;, drink)
+
+____(&quot;pizza&quot;, &quot;salad&quot;, &quot;tea&quot;)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">定義した関数名をそのまま呼び出します。</div>
+    <div class="solution-box hidden"><pre>def order(main, side, drink):
+    print(&quot;main:&quot;, main)
+    print(&quot;side:&quot;, side)
+    print(&quot;drink:&quot;, drink)
+
+order(&quot;pizza&quot;, &quot;salad&quot;, &quot;tea&quot;)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">main: pizza
+side: salad
+drink: tea</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-id="c6-1">
+    <h3>🧠 30秒確認</h3>
+    <p>仮引数とは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c6-1" value="0"> <span>呼び出すときの具体的な値</span></label><label><input type="radio" name="quiz-c6-1" value="1"> <span>関数定義側で値を受け取る変数</span></label><label><input type="radio" name="quiz-c6-1" value="2"> <span>関数の戻り値</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c6-1"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c6-2" data-lesson="c6-2" data-chapter="6">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 6</span>
+      <h2>return</h2>
+      <p class="source">Chapter 6 p.243–245</p>
+    </div>
+    <div class="status-badge" id="status-c6-2">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>処理結果を return で呼び出し元へ返せる。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>return は関数の戻り値を返し、その時点で関数を抜ける。</li><li>return がない関数の戻り値は None。</li><li>条件分岐と return を組み合わせると早期終了もできる。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c6-2" data-expected="odd
+even">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 35分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">def odd_even(n):
+    if n % 2:
+        return ____
+    return ____
+
+print(odd_even(5))
+print(odd_even(6))
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">2で割った余りが0以外なら奇数。</div>
+    <div class="solution-box hidden"><pre>def odd_even(n):
+    if n % 2:
+        return &quot;odd&quot;
+    return &quot;even&quot;
+
+print(odd_even(5))
+print(odd_even(6))
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">odd
+even</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-id="c6-2">
+    <h3>🧠 30秒確認</h3>
+    <p>return が実行されると？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c6-2" value="0"> <span>関数を最初からやり直す</span></label><label><input type="radio" name="quiz-c6-2" value="1"> <span>値を返して関数を終了する</span></label><label><input type="radio" name="quiz-c6-2" value="2"> <span>必ずprintされる</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c6-2"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c6-3" data-lesson="c6-3" data-chapter="6">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 6</span>
+      <h2>位置・キーワード・デフォルト引数</h2>
+      <p class="source">Chapter 6 p.246–253</p>
+    </div>
+    <div class="status-badge" id="status-c6-3">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>引数の指定方法を使い分けられる。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>位置引数は順番で対応する。</li><li>キーワード引数は名前を指定するので順番を変えやすい。</li><li>デフォルト値を持つ引数は、呼び出し時に省略できる。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c6-3" data-expected="steak salad coffee
+pizza salad coffee
+steak soup coffee">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 45分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">def order(main=&quot;steak&quot;, side=&quot;salad&quot;, drink=&quot;coffee&quot;):
+    print(main, side, drink)
+
+order()
+order(&quot;pizza&quot;)
+order(____=&quot;soup&quot;)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">sideだけを変えたいならキーワード引数 side=...。</div>
+    <div class="solution-box hidden"><pre>def order(main=&quot;steak&quot;, side=&quot;salad&quot;, drink=&quot;coffee&quot;):
+    print(main, side, drink)
+
+order()
+order(&quot;pizza&quot;)
+order(side=&quot;soup&quot;)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">steak salad coffee
+pizza salad coffee
+steak soup coffee</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="0" data-id="c6-3">
+    <h3>🧠 30秒確認</h3>
+    <p>キーワード引数の利点は？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c6-3" value="0"> <span>引数名で対応を明示できる</span></label><label><input type="radio" name="quiz-c6-3" value="1"> <span>戻り値が不要になる</span></label><label><input type="radio" name="quiz-c6-3" value="2"> <span>関数を定義しなくてよい</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c6-3"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c6-4" data-lesson="c6-4" data-chapter="6">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 6</span>
+      <h2>*args / **kwargs とアンパック</h2>
+      <p class="source">Chapter 6 p.247–265</p>
+    </div>
+    <div class="status-badge" id="status-c6-4">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>可変長引数とアンパックの基本を理解する。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>*args は複数の位置引数をタプルとして受け取る。</li><li>**kwargs は複数のキーワード引数を辞書として受け取る。</li><li>呼び出し側の * と ** は、リスト/タプルや辞書を引数へ展開する。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c6-4" data-expected="(&#x27;apple&#x27;, &#x27;banana&#x27;)
+{&#x27;price&#x27;: 300, &#x27;shop&#x27;: &#x27;A&#x27;}">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 50分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">def show(*items, **info):
+    print(items)
+    print(info)
+
+show(&quot;apple&quot;, &quot;banana&quot;, price=300, shop=&quot;A&quot;)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">この問題はまず実行結果を観察する問題です。</div>
+    <div class="solution-box hidden"><pre>def show(*items, **info):
+    print(items)
+    print(info)
+
+show(&quot;apple&quot;, &quot;banana&quot;, price=300, shop=&quot;A&quot;)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">(&#x27;apple&#x27;, &#x27;banana&#x27;)
+{&#x27;price&#x27;: 300, &#x27;shop&#x27;: &#x27;A&#x27;}</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="2" data-id="c6-4">
+    <h3>🧠 30秒確認</h3>
+    <p>**kwargs の中身は基本的に何になる？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c6-4" value="0"> <span>list</span></label><label><input type="radio" name="quiz-c6-4" value="1"> <span>tuple</span></label><label><input type="radio" name="quiz-c6-4" value="2"> <span>dict</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c6-4"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c6-5" data-lesson="c6-5" data-chapter="6">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 6</span>
+      <h2>スコープ・global・nonlocal</h2>
+      <p class="source">Chapter 6 p.266–272</p>
+    </div>
+    <div class="status-badge" id="status-c6-5">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>グローバル変数とローカル変数の違いを説明できる。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>関数の外で作った変数はグローバル、関数内で作った変数はローカル。</li><li>関数内からグローバル変数へ代入したい場合は global を使う。</li><li>入れ子関数の外側のローカル変数へ代入したい場合は nonlocal を使う。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c6-5" data-expected="Good Bye">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 50分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">text = &quot;Hello&quot;
+
+def change():
+    ____ text
+    text = &quot;Good Bye&quot;
+
+change()
+print(text)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">関数の外にある text そのものへ代入したい。</div>
+    <div class="solution-box hidden"><pre>text = &quot;Hello&quot;
+
+def change():
+    global text
+    text = &quot;Good Bye&quot;
+
+change()
+print(text)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">Good Bye</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-id="c6-5">
+    <h3>🧠 30秒確認</h3>
+    <p>入れ子関数から1つ外側の関数のローカル変数へ代入する宣言は？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c6-5" value="0"> <span>global</span></label><label><input type="radio" name="quiz-c6-5" value="1"> <span>nonlocal</span></label><label><input type="radio" name="quiz-c6-5" value="2"> <span>public</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c6-5"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c7-1" data-lesson="c7-1" data-chapter="7">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 7</span>
+      <h2>クラスとオブジェクトの考え方</h2>
+      <p class="source">Chapter 7 p.274–279</p>
+    </div>
+    <div class="status-badge" id="status-c7-1">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>クラス・オブジェクト・メソッドの関係を説明できる。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>クラスはオブジェクトの構造や動作を定める設計図のようなもの。</li><li>クラスから作られた具体的なオブジェクトをインスタンスと呼ぶ。</li><li>オブジェクト.メソッド() の形で、そのオブジェクトの処理を呼び出す。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c7-1" data-expected="{1, 2, 3}">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 35分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">x = set()
+
+# setオブジェクトのaddメソッドで 1, 2, 3 を追加
+____
+____
+____
+
+print(x)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">オブジェクト.メソッド(引数) の形。</div>
+    <div class="solution-box hidden"><pre>x = set()
+
+x.add(1)
+x.add(2)
+x.add(3)
+
+print(x)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">{1, 2, 3}</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="0" data-id="c7-1">
+    <h3>🧠 30秒確認</h3>
+    <p>インスタンスとは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c7-1" value="0"> <span>クラスから生成された具体的なオブジェクト</span></label><label><input type="radio" name="quiz-c7-1" value="1"> <span>関数の引数</span></label><label><input type="radio" name="quiz-c7-1" value="2"> <span>ループの条件</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c7-1"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c7-2" data-lesson="c7-2" data-chapter="7">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 7</span>
+      <h2>独自クラス・属性・__init__</h2>
+      <p class="source">Chapter 7 p.280–286</p>
+    </div>
+    <div class="status-badge" id="status-c7-2">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>独自クラスを定義し、__init__ で属性を初期化できる。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>class クラス名: で独自クラスを定義する。</li><li>__init__ はオブジェクト生成時に自動で呼ばれ、初期化に使う。</li><li>self は処理対象のインスタンス自身を表す。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c7-2" data-expected="milk 150">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 55分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">class Food:
+    def __init__(self, name, price):
+        self.name = ____
+        self.price = ____
+
+x = Food(&quot;milk&quot;, 150)
+print(x.name, x.price)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">受け取った name と price を self の属性へ保存します。</div>
+    <div class="solution-box hidden"><pre>class Food:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+x = Food(&quot;milk&quot;, 150)
+print(x.name, x.price)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">milk 150</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-id="c7-2">
+    <h3>🧠 30秒確認</h3>
+    <p>self が表すものは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c7-2" value="0"> <span>Python全体</span></label><label><input type="radio" name="quiz-c7-2" value="1"> <span>そのメソッドの処理対象になっているインスタンス</span></label><label><input type="radio" name="quiz-c7-2" value="2"> <span>親クラス</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c7-2"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c7-3" data-lesson="c7-3" data-chapter="7">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 7</span>
+      <h2>メソッド・属性の扱い・クラス属性</h2>
+      <p class="source">Chapter 7 p.286–294</p>
+    </div>
+    <div class="status-badge" id="status-c7-3">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>インスタンスメソッドとクラス属性を使える。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>インスタンスメソッドの第1引数には通常 self を書く。</li><li>クラス属性はクラス全体で共有する値を置く。</li><li>先頭に __ を付けた属性名は名前マングリングの対象になる。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c7-3" data-expected="2 egg">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 50分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">class Food:
+    count = 0
+
+    def __init__(self, name):
+        self.name = name
+        Food.count += 1
+
+    def show(self):
+        print(Food.count, self.name)
+
+a = Food(&quot;milk&quot;)
+b = Food(&quot;egg&quot;)
+b.show()
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">Food.count はインスタンスごとではなくクラスで共有されます。</div>
+    <div class="solution-box hidden"><pre>class Food:
+    count = 0
+
+    def __init__(self, name):
+        self.name = name
+        Food.count += 1
+
+    def show(self):
+        print(Food.count, self.name)
+
+a = Food(&quot;milk&quot;)
+b = Food(&quot;egg&quot;)
+b.show()
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">2 egg</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-id="c7-3">
+    <h3>🧠 30秒確認</h3>
+    <p>クラス属性に向くものは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c7-3" value="0"> <span>各個体で必ず違う名前</span></label><label><input type="radio" name="quiz-c7-3" value="1"> <span>クラス全体で共有したい生成数カウンタ</span></label><label><input type="radio" name="quiz-c7-3" value="2"> <span>一時的なfor変数</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c7-3"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c7-4" data-lesson="c7-4" data-chapter="7">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 7</span>
+      <h2>継承・オーバーライド・super</h2>
+      <p class="source">Chapter 7 p.295–304</p>
+    </div>
+    <div class="status-badge" id="status-c7-4">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>基底クラスを継承し、メソッドを拡張できる。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>class 子クラス(親クラス): で継承する。</li><li>同じ名前のメソッドを子クラスで定義するとオーバーライドになる。</li><li>super() で基底クラス側のメソッドを呼び出せる。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c7-4" data-expected="name: chocolate
+price: 100
+use-by: 180">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 60分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">class Item:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+    def show(self):
+        print(&quot;name:&quot;, self.name)
+        print(&quot;price:&quot;, self.price)
+
+class Food(Item):
+    def __init__(self, name, price, use_by):
+        ____
+        self.use_by = use_by
+
+    def show(self):
+        ____
+        print(&quot;use-by:&quot;, self.use_by)
+
+x = Food(&quot;chocolate&quot;, 100, 180)
+x.show()
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">親クラスの __init__ と show を super() で再利用します。</div>
+    <div class="solution-box hidden"><pre>class Item:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+    def show(self):
+        print(&quot;name:&quot;, self.name)
+        print(&quot;price:&quot;, self.price)
+
+class Food(Item):
+    def __init__(self, name, price, use_by):
+        super().__init__(name, price)
+        self.use_by = use_by
+
+    def show(self):
+        super().show()
+        print(&quot;use-by:&quot;, self.use_by)
+
+x = Food(&quot;chocolate&quot;, 100, 180)
+x.show()
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">name: chocolate
+price: 100
+use-by: 180</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="0" data-id="c7-4">
+    <h3>🧠 30秒確認</h3>
+    <p>オーバーライドとは？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c7-4" value="0"> <span>親と同名メソッドを子で再定義すること</span></label><label><input type="radio" name="quiz-c7-4" value="1"> <span>変数を削除すること</span></label><label><input type="radio" name="quiz-c7-4" value="2"> <span>複数の関数を同時実行すること</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c7-4"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+<section class="lesson" id="c7-5" data-lesson="c7-5" data-chapter="7">
+  <div class="lesson-head">
+    <div>
+      <span class="chapter-pill">CHAPTER 7</span>
+      <h2>多重継承とMRO</h2>
+      <p class="source">Chapter 7 p.305–310 付近</p>
+    </div>
+    <div class="status-badge" id="status-c7-5">未着手</div>
+  </div>
+
+  <div class="goal"><strong>このレッスンのゴール</strong><br>多重継承でメソッド探索順序が重要だと理解する。</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>まず押さえる3点</h3>
+      <ul><li>複数クラスを継承する多重継承がある。</li><li>同名メソッドが複数の親にある場合、MRO（メソッド解決順序）に従って探される。</li><li>__mro__ で探索順序を確認できる。</li></ul>
+    </div>
+    <div class="concept-card workflow">
+      <h3>学び方</h3>
+      <ol>
+        <li>説明を読む</li>
+        <li>実行結果を予想</li>
+        <li>空欄を自分で埋める</li>
+        <li>実行して確認</li>
+        <li>クイズで言語化</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="playground" data-id="c7-5" data-expected="A
+A">
+    <div class="playground-top">
+      <div>
+        <h3>✍ コード練習</h3>
+        <p>空欄 <code>____</code> を自分で直してから実行。</p>
+      </div>
+      <span class="time">目安 40分</span>
+    </div>
+    <textarea class="editor" spellcheck="false">class A:
+    def show(self):
+        print(&quot;A&quot;)
+
+class B:
+    def show(self):
+        print(&quot;B&quot;)
+
+class C(A, B):
+    pass
+
+C().show()
+print(C.__mro__[1].__name__)
+</textarea>
+    <div class="actions">
+      <button class="run-btn">▶ 実行</button>
+      <button class="check-btn">✓ 判定</button>
+      <button class="hint-btn">ヒント</button>
+      <button class="solution-btn">解答を見る</button>
+      <button class="reset-btn">リセット</button>
+    </div>
+    <div class="hint-box hidden">C(A, B) なので、まず A 側を探します。</div>
+    <div class="solution-box hidden"><pre>class A:
+    def show(self):
+        print(&quot;A&quot;)
+
+class B:
+    def show(self):
+        print(&quot;B&quot;)
+
+class C(A, B):
+    pass
+
+C().show()
+print(C.__mro__[1].__name__)
+</pre></div>
+    <div class="output-wrap">
+      <div><b>実行結果</b><pre class="output">まだ実行していません</pre></div>
+      <div><b>期待する結果</b><pre class="expected">A
+A</pre></div>
+    </div>
+    <div class="judge"></div>
+  </div>
+
+  <div class="quiz" data-answer="1" data-id="c7-5">
+    <h3>🧠 30秒確認</h3>
+    <p>MROは何を表す？</p>
+    <div class="choices"><label><input type="radio" name="quiz-c7-5" value="0"> <span>メモリ使用量</span></label><label><input type="radio" name="quiz-c7-5" value="1"> <span>メソッドを探す順序</span></label><label><input type="radio" name="quiz-c7-5" value="2"> <span>変数の型</span></label></div>
+    <button class="quiz-btn">答え合わせ</button>
+    <span class="quiz-result"></span>
+  </div>
+
+  <div class="complete-row">
+    <label class="complete-check"><input type="checkbox" class="complete-box" data-id="c7-5"> このレッスンを完了にする</label>
+    <button class="next-btn">次へ →</button>
+  </div>
+</section>
+
+
+<section class="review" id="final-review">
+  <span class="chapter-pill">FINAL REVIEW</span>
+  <h2>総合チェック：4問</h2>
+  <p>ここは「何も見ずに方針が浮かぶか」を確認します。コードを書く前に、使う構文を口に出してください。</p>
+  <div class="review-grid">
+    <article><b>① データ構造</b><p>商品名→価格を保存し、存在しない商品は "none" と表示する。何を使う？</p><details><summary>答え</summary><p>dict と get()</p></details></article>
+    <article><b>② 制御構造</b><p>リストを番号付きで1件ずつ表示したい。何を使う？</p><details><summary>答え</summary><p>for + enumerate()</p></details></article>
+    <article><b>③ 関数</b><p>計算結果を関数の外で再利用したい。何が必要？</p><details><summary>答え</summary><p>return</p></details></article>
+    <article><b>④ オブジェクト指向</b><p>親クラスの初期化を利用しつつ子だけの属性を追加したい。何を使う？</p><details><summary>答え</summary><p>継承 + super().__init__()</p></details></article>
+  </div>
+</section>
+
+</div>
+</main>
+</div>
+
+<div class="runner-state" id="runnerState">Python準備中…</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js"></script>
+<script>
+const LESSONS = [{"id": "c4-1", "starter": "drinks = [\"coffee\", \"tea\", \"milk\", \"water\"]\n\n# 1) 3番目の要素を表示\nprint(____)\n\n# 2) tea と milk をスライスで表示\nprint(____)\n", "solution": "drinks = [\"coffee\", \"tea\", \"milk\", \"water\"]\n\nprint(drinks[2])\nprint(drinks[1:3])\n"}, {"id": "c4-2", "starter": "a = [\"coffee\", \"tea\", \"milk\"]\nb = a\nc = a.copy()\n\nb[-1] = \"soda\"\n\nprint(a)\nprint(c)\n", "solution": "a = [\"coffee\", \"tea\", \"milk\"]\nb = a\nc = a.copy()\n\nb[-1] = \"soda\"\n\nprint(a)\nprint(c)\n"}, {"id": "c4-3", "starter": "menu = [\"burger\", \"potato\"]\n\n# juice を1個追加\n____\n\n# cake と coffee をまとめて追加\n____\n\n# \":\" で連結して表示\nprint(____)\n", "solution": "menu = [\"burger\", \"potato\"]\n\nmenu.append(\"juice\")\nmenu.extend([\"cake\", \"coffee\"])\n\nprint(\":\".join(menu))\n"}, {"id": "c4-4", "starter": "product = (\"apple\", 180)\n\nname, price = ____\n\nprint(name)\nprint(price)\n", "solution": "product = (\"apple\", 180)\n\nname, price = product\n\nprint(name)\nprint(price)\n"}, {"id": "c4-5", "starter": "a = {\"python\", \"java\", \"sql\"}\nb = {\"python\", \"html\"}\n\nprint(\"python\" in a)\n\n# 両方に含まれるものを表示\nprint(____)\n", "solution": "a = {\"python\", \"java\", \"sql\"}\nb = {\"python\", \"html\"}\n\nprint(\"python\" in a)\nprint(a & b)\n"}, {"id": "c4-6", "starter": "lang = {\"ja\": \"Japanese\", \"en\": \"English\"}\n\n# fr を追加\n____\n\nprint(lang.get(\"de\", \"Unknown\"))\n\nfor key, value in lang.items():\n    print(key, value)\n", "solution": "lang = {\"ja\": \"Japanese\", \"en\": \"English\"}\n\nlang[\"fr\"] = \"French\"\n\nprint(lang.get(\"de\", \"Unknown\"))\n\nfor key, value in lang.items():\n    print(key, value)\n"}, {"id": "c5-1", "starter": "score = 78\n\nif score >= 90:\n    print(\"A\")\nelif ____:\n    print(\"B\")\nelse:\n    print(\"C\")\n", "solution": "score = 78\n\nif score >= 90:\n    print(\"A\")\nelif score >= 70:\n    print(\"B\")\nelse:\n    print(\"C\")\n"}, {"id": "c5-2", "starter": "age = 20\n\nmessage = ____ if age >= 18 else ____\nprint(message)\n", "solution": "age = 20\n\nmessage = \"adult\" if age >= 18 else \"minor\"\nprint(message)\n"}, {"id": "c5-3", "starter": "total = 0\n\n# 1〜5を順に足す\nfor n in ____:\n    total += n\n\nprint(total)\n", "solution": "total = 0\n\nfor n in range(1, 6):\n    total += n\n\nprint(total)\n"}, {"id": "c5-4", "starter": "drinks = [\"coffee\", \"tea\", \"juice\"]\n\nfor i, drink in enumerate(drinks, ____):\n    print(i, drink)\n", "solution": "drinks = [\"coffee\", \"tea\", \"juice\"]\n\nfor i, drink in enumerate(drinks, 1):\n    print(i, drink)\n"}, {"id": "c5-5", "starter": "n = 0\n\nwhile n < 5:\n    n += 1\n    if n == 3:\n        ____\n    print(n)\n", "solution": "n = 0\n\nwhile n < 5:\n    n += 1\n    if n == 3:\n        continue\n    print(n)\n"}, {"id": "c5-6", "starter": "for i in range(3):\n    if i == 1:\n        ____\n    print(i)\n", "solution": "for i in range(3):\n    if i == 1:\n        pass\n    print(i)\n"}, {"id": "c6-1", "starter": "def order(main, side, drink):\n    print(\"main:\", main)\n    print(\"side:\", side)\n    print(\"drink:\", drink)\n\n____(\"pizza\", \"salad\", \"tea\")\n", "solution": "def order(main, side, drink):\n    print(\"main:\", main)\n    print(\"side:\", side)\n    print(\"drink:\", drink)\n\norder(\"pizza\", \"salad\", \"tea\")\n"}, {"id": "c6-2", "starter": "def odd_even(n):\n    if n % 2:\n        return ____\n    return ____\n\nprint(odd_even(5))\nprint(odd_even(6))\n", "solution": "def odd_even(n):\n    if n % 2:\n        return \"odd\"\n    return \"even\"\n\nprint(odd_even(5))\nprint(odd_even(6))\n"}, {"id": "c6-3", "starter": "def order(main=\"steak\", side=\"salad\", drink=\"coffee\"):\n    print(main, side, drink)\n\norder()\norder(\"pizza\")\norder(____=\"soup\")\n", "solution": "def order(main=\"steak\", side=\"salad\", drink=\"coffee\"):\n    print(main, side, drink)\n\norder()\norder(\"pizza\")\norder(side=\"soup\")\n"}, {"id": "c6-4", "starter": "def show(*items, **info):\n    print(items)\n    print(info)\n\nshow(\"apple\", \"banana\", price=300, shop=\"A\")\n", "solution": "def show(*items, **info):\n    print(items)\n    print(info)\n\nshow(\"apple\", \"banana\", price=300, shop=\"A\")\n"}, {"id": "c6-5", "starter": "text = \"Hello\"\n\ndef change():\n    ____ text\n    text = \"Good Bye\"\n\nchange()\nprint(text)\n", "solution": "text = \"Hello\"\n\ndef change():\n    global text\n    text = \"Good Bye\"\n\nchange()\nprint(text)\n"}, {"id": "c7-1", "starter": "x = set()\n\n# setオブジェクトのaddメソッドで 1, 2, 3 を追加\n____\n____\n____\n\nprint(x)\n", "solution": "x = set()\n\nx.add(1)\nx.add(2)\nx.add(3)\n\nprint(x)\n"}, {"id": "c7-2", "starter": "class Food:\n    def __init__(self, name, price):\n        self.name = ____\n        self.price = ____\n\nx = Food(\"milk\", 150)\nprint(x.name, x.price)\n", "solution": "class Food:\n    def __init__(self, name, price):\n        self.name = name\n        self.price = price\n\nx = Food(\"milk\", 150)\nprint(x.name, x.price)\n"}, {"id": "c7-3", "starter": "class Food:\n    count = 0\n\n    def __init__(self, name):\n        self.name = name\n        Food.count += 1\n\n    def show(self):\n        print(Food.count, self.name)\n\na = Food(\"milk\")\nb = Food(\"egg\")\nb.show()\n", "solution": "class Food:\n    count = 0\n\n    def __init__(self, name):\n        self.name = name\n        Food.count += 1\n\n    def show(self):\n        print(Food.count, self.name)\n\na = Food(\"milk\")\nb = Food(\"egg\")\nb.show()\n"}, {"id": "c7-4", "starter": "class Item:\n    def __init__(self, name, price):\n        self.name = name\n        self.price = price\n\n    def show(self):\n        print(\"name:\", self.name)\n        print(\"price:\", self.price)\n\nclass Food(Item):\n    def __init__(self, name, price, use_by):\n        ____\n        self.use_by = use_by\n\n    def show(self):\n        ____\n        print(\"use-by:\", self.use_by)\n\nx = Food(\"chocolate\", 100, 180)\nx.show()\n", "solution": "class Item:\n    def __init__(self, name, price):\n        self.name = name\n        self.price = price\n\n    def show(self):\n        print(\"name:\", self.name)\n        print(\"price:\", self.price)\n\nclass Food(Item):\n    def __init__(self, name, price, use_by):\n        super().__init__(name, price)\n        self.use_by = use_by\n\n    def show(self):\n        super().show()\n        print(\"use-by:\", self.use_by)\n\nx = Food(\"chocolate\", 100, 180)\nx.show()\n"}, {"id": "c7-5", "starter": "class A:\n    def show(self):\n        print(\"A\")\n\nclass B:\n    def show(self):\n        print(\"B\")\n\nclass C(A, B):\n    pass\n\nC().show()\nprint(C.__mro__[1].__name__)\n", "solution": "class A:\n    def show(self):\n        print(\"A\")\n\nclass B:\n    def show(self):\n        print(\"B\")\n\nclass C(A, B):\n    pass\n\nC().show()\nprint(C.__mro__[1].__name__)\n"}];
+const lessonMap = Object.fromEntries(LESSONS.map(x => [x.id, x]));
+let pyodideReady = null;
+
+async function initPyodide() {
+  const state = document.getElementById("runnerState");
+  try {
+    state.textContent = "Python読み込み中…";
+    window.pyodide = await loadPyodide();
+    pyodideReady = window.pyodide;
+    state.textContent = "Python実行OK";
+    setTimeout(()=>state.style.opacity=".75",1200);
+  } catch(e) {
+    state.textContent = "Python読込失敗：ネット接続を確認";
+  }
+}
+initPyodide();
+
+function normalize(s) {
+  return String(s).replace(/\r\n/g,"\n").trim();
+}
+
+async function runPython(playground) {
+  const output = playground.querySelector(".output");
+  const code = playground.querySelector(".editor").value;
+  if (!pyodideReady) {
+    output.textContent = "Pythonを読み込み中です。数秒後にもう一度実行してください。";
+    return null;
+  }
+  let buffer = [];
+  pyodideReady.setStdout({batched: (s)=>buffer.push(s)});
+  pyodideReady.setStderr({batched: (s)=>buffer.push(s)});
+  try {
+    await pyodideReady.runPythonAsync(code);
+    output.textContent = buffer.join("\n") || "(出力なし)";
+  } catch(e) {
+    output.textContent = buffer.concat([String(e)]).join("\n");
+  }
+  saveEditor(playground);
+  return output.textContent;
+}
+
+function saveEditor(pg) {
+  const id = pg.dataset.id;
+  localStorage.setItem("pyStudy.code."+id, pg.querySelector(".editor").value);
+}
+function loadEditors() {
+  document.querySelectorAll(".playground").forEach(pg=>{
+    const saved = localStorage.getItem("pyStudy.code."+pg.dataset.id);
+    if(saved !== null) pg.querySelector(".editor").value=saved;
+  });
+}
+
+document.querySelectorAll(".run-btn").forEach(btn=>btn.addEventListener("click", async()=>{
+  const pg=btn.closest(".playground");
+  pg.querySelector(".judge").textContent="";
+  await runPython(pg);
+}));
+
+document.querySelectorAll(".check-btn").forEach(btn=>btn.addEventListener("click", async()=>{
+  const pg=btn.closest(".playground");
+  const result=await runPython(pg);
+  if(result===null) return;
+  const judge=pg.querySelector(".judge");
+  if(normalize(result)===normalize(pg.dataset.expected)) {
+    judge.textContent="✅ 正解。期待する結果と一致しました。";
+    judge.className="judge good";
+  } else {
+    judge.textContent="↺ まだ一致していません。エラーまたは出力の違いを確認して、もう一度直してみよう。";
+    judge.className="judge bad";
+  }
+}));
+
+document.querySelectorAll(".hint-btn").forEach(btn=>btn.addEventListener("click",()=>{
+  btn.closest(".playground").querySelector(".hint-box").classList.toggle("hidden");
+}));
+document.querySelectorAll(".solution-btn").forEach(btn=>btn.addEventListener("click",()=>{
+  const box=btn.closest(".playground").querySelector(".solution-box");
+  box.classList.toggle("hidden");
+  btn.textContent=box.classList.contains("hidden")?"解答を見る":"解答を隠す";
+}));
+document.querySelectorAll(".reset-btn").forEach(btn=>btn.addEventListener("click",()=>{
+  const pg=btn.closest(".playground"), id=pg.dataset.id;
+  pg.querySelector(".editor").value=lessonMap[id].starter;
+  pg.querySelector(".output").textContent="まだ実行していません";
+  pg.querySelector(".judge").textContent="";
+  localStorage.removeItem("pyStudy.code."+id);
+}));
+document.querySelectorAll(".editor").forEach(ed=>ed.addEventListener("input",()=>saveEditor(ed.closest(".playground"))));
+
+document.querySelectorAll(".quiz-btn").forEach(btn=>btn.addEventListener("click",()=>{
+  const quiz=btn.closest(".quiz");
+  const selected=quiz.querySelector("input[type=radio]:checked");
+  const result=quiz.querySelector(".quiz-result");
+  if(!selected){ result.textContent="選択してください"; return; }
+  const ok=Number(selected.value)===Number(quiz.dataset.answer);
+  result.textContent=ok?"✅ 正解":"❌ もう一度";
+  result.style.color=ok?"#15803d":"#b91c1c";
+}));
+
+function updateProgress() {
+  const checks=[...document.querySelectorAll(".complete-box")];
+  const done=checks.filter(c=>c.checked).length;
+  const pct=Math.round(done/checks.length*100);
+  document.getElementById("progressFill").style.width=pct+"%";
+  document.getElementById("progressCount").textContent=done+" / "+checks.length;
+  document.getElementById("progressPct").textContent=pct+"%";
+  checks.forEach(c=>{
+    const badge=document.getElementById("status-"+c.dataset.id);
+    badge.textContent=c.checked?"完了":"未着手";
+    badge.classList.toggle("done",c.checked);
+  });
+}
+document.querySelectorAll(".complete-box").forEach(c=>{
+  c.checked=localStorage.getItem("pyStudy.done."+c.dataset.id)==="1";
+  c.addEventListener("change",()=>{
+    localStorage.setItem("pyStudy.done."+c.dataset.id,c.checked?"1":"0");
+    updateProgress();
+  });
+});
+
+function jumpTo(id) {
+  document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"});
+}
+document.querySelectorAll("[data-target]").forEach(b=>b.addEventListener("click",()=>jumpTo(b.dataset.target)));
+document.querySelectorAll(".next-btn").forEach((btn,i,arr)=>btn.addEventListener("click",()=>{
+  const current=btn.closest(".lesson");
+  const lessons=[...document.querySelectorAll(".lesson")];
+  const idx=lessons.indexOf(current);
+  (lessons[idx+1] || document.getElementById("final-review")).scrollIntoView({behavior:"smooth"});
+}));
+
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll(".lesson-link").forEach(x=>x.classList.toggle("active",x.dataset.target===e.target.id));
+    }
+  });
+},{rootMargin:"-35% 0px -55% 0px"});
+document.querySelectorAll(".lesson").forEach(x=>observer.observe(x));
+
+loadEditors();
+updateProgress();
+</script>
+</body>
+</html>
